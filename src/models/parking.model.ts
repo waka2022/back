@@ -16,7 +16,11 @@ const parkingSchema: Schema = new Schema({
         required: true
     },
     type_parks: {
-        type: [String],
+        type: {
+            _0: Boolean, //? -> Moto
+            _1: Boolean, //? -> Carro
+            _2: Boolean //? -> Bici
+        },
         required: true
     },
     type_security: {
@@ -50,25 +54,37 @@ const parkingSchema: Schema = new Schema({
         type: String,
         required: true
     },
-    photo: {
-        type: [String],
+    ubi: {
+        type: {
+            lon: Number,
+            lat: Number
+        }
+    },
+    price: {
+        type: Number,
+        required: true,
+        default: 500
+    },
+    quotas: {
+        type: {
+            totals: {
+                type: Number,
+                required: true
+            },
+            not_available: {
+                type: Number,
+                required: true,
+                default: 0
+            }
+        }
+    },
+    space: {
+        type: String,
         required: true
     },
-    ratings: {
-        type: [
-            {
-                id_user: {
-                    type: Schema.Types.ObjectId,
-                    ref: 'Users'
-                },
-                coment: {
-                    type: String
-                },
-                ranking: {
-                    type: Number
-                }
-            }
-        ]
+    photo: {
+        type: [String],
+        //required: true
     }
 })
 /*********/

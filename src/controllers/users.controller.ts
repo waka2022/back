@@ -19,6 +19,8 @@
     //* |-> Templates
         //? -> Disable account
         import { email_disable_template_html } from '../templates/disable_account.template'
+    //* |-> Funciones
+    import { funAccount } from "../functions/solicitud.function";
 /*********/
 //*? -_ Controlador  que mostrara todos los usuarios inscritos en el sistema waka
 const viewAllUser = async (req: Request, res: Response) => {
@@ -54,7 +56,7 @@ const registerUser = async (req: Request, res: Response) => {
         //* |-> Desestructuramos las propiedades nesesarias
         const { password, email } = body
         //* |-> Buscamos si el correo suministrado existe previamente en el sistema para evitar duplas
-        const findUserEmail = await Users.findOne({ email })
+        const findUserEmail = await Users.findOne({ "email_t.email": email })
         //* |-> Si encuentra un documento relacionado retornaremos un error 400
         if (findUserEmail || findUserEmail != null || findUserEmail != undefined) {
             return $Response(res, { status: 400, succ: false, msg: _cloud_product_ === 'false' ? 'El usuario ya existe en el sistema' : 'Lo sentimos, en este momento el correo suministrado ya existe en el sistema' })
@@ -65,10 +67,7 @@ const registerUser = async (req: Request, res: Response) => {
         const pass_encript = bcrypt.hashSync(password, saltHash)
         //* |-> Incorporamos la contraseña encriptada en el modelo del usuario que se va a crear
         const new_body = {
-            names: {
-                name: body.name,
-                last_name: body.last_name
-            },
+            names: body.name,
             email_t: {
                 email
             },
@@ -77,7 +76,9 @@ const registerUser = async (req: Request, res: Response) => {
         //* |-> Armamos el cuerpo de el usuario
         const new_user = new Users(new_body)
         //* |-> Guardamos el nuevo usuario en el dbms
-        new_user.save()
+        const user = await new_user.save()
+        //* |-> 
+        await funAccount(user, res, 1)
         //* |-> Respondemos al cliente que hizo la peticion un mensaje de exito 200
         return $Response(res, { status: 200, succ: true, msg: _cloud_product_ === 'false' ? 'Se creo correctamente el usuario' : `Se ha creado correctamente un nuevo usuario con correo ${email}, pide la verificacion y inicia ahora` })
     } catch (err) {
@@ -125,23 +126,26 @@ const updateInfoUser = async (req: Request, res: Response) => {
     const body: _update_user = req.body
     //* |-> Control de errores tryCatch
     try {
-        //* |-> Buscaremos si exite un documento parecido en el sistema
-        const findUsersDocument = await Users.findOne({ document: body.document })
-        //* |-> Si existe un usuario con el mismo documento retornamos un error 400
-        if (findUsersDocument || findUsersDocument != null || findUsersDocument != undefined) {
-            return $Response(
-                res,
-                { succ: false, status: 400, msg: `${_cloud_product_ === 'false' ? 'Hay un documento igual en el sistema' : `Lo sentimos pero el documento inscrito previamente ya existe o aparece en otro susuario`}` }
-            )
-        }
-        //* |-> Buscaremos si exite un documento parecido en el sistema
-        const findUsersPhone = await Users.findOne({ phone: body.phone })
-        //* |-> Si existe un usuario con el mismo documento retornamos un error 400
-        if (findUsersPhone || findUsersPhone != null || findUsersPhone != undefined) {
-            return $Response(
-                res,
-                { succ: false, status: 400, msg: `${_cloud_product_ === 'false' ? 'Hay un telefono igual en el sistema' : `Lo sentimos pero el telefono inscrito previamente ya existe o aparece en otro susuario`}` }
-            )
+        //* |-> Validamos si existe el campo en la peticion
+        if (body.document || body.phone) {
+            //* |-> Buscaremos si exite un documento parecido en el sistema
+            const findUsersDocument = await Users.findOne({ document: body.document })
+            //* |-> Si existe un usuario con el mismo documento retornamos un error 400
+            if (findUsersDocument || findUsersDocument != null || findUsersDocument != undefined) {
+                return $Response(
+                    res,
+                    { succ: false, status: 400, msg: `${_cloud_product_ === 'false' ? 'Hay un documento igual en el sistema' : `Lo sentimos pero el documento inscrito previamente ya existe o aparece en otro susuario`}` }
+                )
+            }
+            //* |-> Buscaremos si exite un documento parecido en el sistema
+            const findUsersPhone = await Users.findOne({ phone: body.phone })
+            //* |-> Si existe un usuario con el mismo documento retornamos un error 400
+            if (findUsersPhone || findUsersPhone != null || findUsersPhone != undefined) {
+                return $Response(
+                    res,
+                    { succ: false, status: 400, msg: `${_cloud_product_ === 'false' ? 'Hay un telefono igual en el sistema' : `Lo sentimos pero el telefono inscrito previamente ya existe o aparece en otro susuario`}` }
+                )
+            }
         }
         //* |-> Actualizaremos la informacion del usuario
         await Users.findByIdAndUpdate(user_t._id, body)
@@ -181,6 +185,30 @@ const disableAccount = async (req: Request, res: Response) => {
         return $Response(res, { status: 500, succ: false, msg: `${_cloud_product_ === 'false' ? 'Ups... ocurrio un problema revisa los logs' : 'Tuvimos un error al procesar los datos, comunicate con nuestro equipo tecnico!'}` })
     }
 }
+//*? -_ Controlador que actualizara la imagen de perfil
+const photoProfile = async(req: Request, res: Response) => {
+    //* |-> Capturamos el usuario que hace la peticion
+    const { user_t }: any = req
+    //* |-> Capturamos la url de la imagen
+    const { urls }: string[] | any = req.body
+    //* |-> Control de errores tryCatch
+    try {
+        //* |-> capturamos una sola imagen
+        const img = urls[0]
+        //* |-> Actualizamos el schema de usuario para agregar la img
+        await Users.findByIdAndUpdate(user_t._id, { img })
+        //* |-> Retornamos un mensaje de exito 200
+        return $Response(
+            res,
+            { status: 200, succ: true, msg: 'Tu foto de perfil fue actualizada con exito!' }
+        )
+    } catch (err) {
+        //*! Imprimimos por consola el error
+        console.log(err);
+        //*! Retornamos un error 500 al cliente que hace la peticion
+        return $Response(res, { status: 500, succ: false, msg: `${_cloud_product_ === 'false' ? 'Ups... ocurrio un problema revisa los logs' : 'Tuvimos un error al procesar los datos, comunicate con nuestro equipo tecnico!'}` })
+    }
+}
 /*********/
 // TODO -> Exportacion del modulo
 export {
@@ -189,5 +217,6 @@ export {
     viewUserId,
     addInfoUser,
     updateInfoUser,
-    disableAccount
+    disableAccount,
+    photoProfile
 }

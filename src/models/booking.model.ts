@@ -11,16 +11,21 @@ const bookingSchema: Schema = new Schema({
         ref: 'Users',
         required: true
     },
+    id_vehicle: {
+        type: Schema.Types.ObjectId,
+        ref: 'Vehicle',
+        required: true
+    },
     id_park: {
         type: Schema.Types.ObjectId,
         ref: 'Parkings'
     },
     date_booking: {
         type: {
-            publish: {
+            publish: { //? -_ Cuando lo solicita
                 type: Date
             },
-            booking: {
+            booking: { //? -_ Cuando esta en la reserva
                 type: Date
             }
         }
@@ -36,11 +41,18 @@ const bookingSchema: Schema = new Schema({
             end_park: {
                 moment: Date,
                 status: Boolean
-            }
+            },
+            on_cancel: Boolean
         }
     },
+    photo_news: {
+        type: [String]
+    },
     parnet: {
-        type: Boolean
+        type: {
+            totals: Number,
+            status_parnet: Boolean
+        }
     }
 })
 /*********/

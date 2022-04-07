@@ -6,10 +6,7 @@
 //? -_ Schema users
 const UserSchema: Schema = new Schema({
     names: {
-        type: {
-            name: String,
-            last_name: String
-        },
+        type: String,
         required: true
     },
     email_t: {
@@ -19,18 +16,23 @@ const UserSchema: Schema = new Schema({
                 unique: true
             },
             verify_at: {
-                type: Date
+                type: {
+                    date: {
+                        type: Date,
+                    },
+                    status: {
+                        type: Boolean
+                    }
+                }
             }
         },
         required: true
     },
     document: {
-        type: String,
-        unique: true
+        type: String
     },
     phone: {
-        type: String,
-        unique: true
+        type: String
     },
     password: {
         type: String,

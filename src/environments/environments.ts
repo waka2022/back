@@ -23,6 +23,9 @@ const _goo_key_: string = String(process.env.GOOGLE_KEY)
 const _redirect_api_goo_: string = String(process.env.PATH_REDIRECT_GOO)
 const _email_def_: string = String(process.env.EMAIL_DEF)
 const _urls_template_: string = _cloud_product_ === 'false' ? 'http://localhost:4200/' : 'http://localhost:4200/'
+const _secret_token_files_: string = String(process.env.SECRET_TOKEN_FILES)
+const _key_files_: string = String(process.env.SECRET_KEY)
+const _url_waka_files_: string = `${ _cloud_product_ === 'false' ? 'http://localhost:2000/waka-files/v1' : '' }`
 /*********/
 // TODO -> Exportacion de modulo
 export {
@@ -36,5 +39,10 @@ export {
     _goo_key_,
     _redirect_api_goo_,
     _email_def_,
-    _urls_template_
+    _urls_template_,
+    _secret_token_files_,
+    _key_files_,
+    _user_mongo_,
+    _pass_mongo_,
+    _url_waka_files_
 }

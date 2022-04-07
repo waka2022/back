@@ -13,13 +13,18 @@ const vehicleSchema: Schema = new Schema({
     },
     type_vehi: {
         type: {
-            global: String,
+            global: Number, //? -> { 0: moto, 1: carro, 2: bicicleta }
             mark: String,
-            model: String,
+            model: Number,
             placa: String,
             color: String
         },
         required: true
+    },
+    status: {
+        type: Boolean,
+        required: true,
+        default: false
     },
     photo: {
         type: [String]
