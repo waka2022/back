@@ -64,17 +64,14 @@ const signInGoogle = async (req: Request, res: Response) => {
     //* |-> Control de errores TryCatch
     try {
         //* |-> Extraemos la informacion del token de google
-        const { email, name, picture } = await gooVerifyToken(token_google)
+        const { email, name, picture } = await gooVerifyToken(token_google)        
         //* |-> Buscamos si exite el usuario previamente en el sistema
-        const findUserEmail = await User.findOne({ email })
+        const findUserEmail = await User.findOne({ "email_t.email": email })
         //* |-> Si no exite el usuario armaremos y guardamos
         if (!findUserEmail || findUserEmail === null || findUserEmail === undefined) {
             //* |-> Variable que contendra el cuerpo del nuevo usuario
             const body = {
-                names: {
-                    name: name,
-                    last_name: ''
-                },
+                names: name,
                 email_t: {
                     email
                 },
@@ -86,22 +83,30 @@ const signInGoogle = async (req: Request, res: Response) => {
             const new_user = new User(body)
             //* |-> Guardamos el nuevo modelo
             new_user.save()
-        }
-        //* |-> Validamos si esta habilitado en google
-        if (findUserEmail.google !== true) {
-            //* |-> Si es diferente retornaremos un error 400
+            //* |-> Generaremos un token
+            const token: string = await generateJWTexpire(new_user._id, '5h')
+            //* |-> Retornamos un mensaje de exito 200
             return $Response(
                 res,
-                { status: 400, succ: false, msg: `${ _cloud_product_ === 'false' ? 'No es usuario de google' : `Lo sentimos el usuario no esta habilitado para ingresos con google` }` }
+                { status: 200, succ: true, msg: `Bienvenido ${new_user.names}`, data: token }
+            )
+        }else {
+            //* |-> Validamos si esta habilitado en google
+            if (findUserEmail.google !== true) {
+                //* |-> Si es diferente retornaremos un error 400
+                return $Response(
+                    res,
+                    { status: 400, succ: false, msg: `${ _cloud_product_ === 'false' ? 'No es usuario de google' : `Lo sentimos el usuario no esta habilitado para ingresos con google` }` }
+                )
+            }
+            //* |-> Generaremos un token
+            const token: string = await generateJWTexpire(findUserEmail._id, '5h')
+            //* |-> Retornamos un mensaje de exito 200
+            return $Response(
+                res,
+                { status: 200, succ: true, msg: `Bienvenido ${findUserEmail.names}`, data: token }
             )
         }
-        //* |-> Generaremos un token
-        const token: string = await generateJWTexpire(findUserEmail._id, '5h')
-        //* |-> Retornamos un mensaje de exito 200
-        return $Response(
-            res,
-            { status: 200, succ: true, msg: `Bienvenido ${findUserEmail.names.name}`, data: token }
-        )
     } catch (err) {
         //*! Imprimimos el error por consola
         console.log(err);

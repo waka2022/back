@@ -112,6 +112,17 @@ interface _request_reservation {
         status_parnet: boolean;
     }
 }
+//? $ Interface para el registro del ranking
+interface _ranking_register {
+    id_parking: string;
+    coment: string;
+    ranking: number;
+}
+//? $ interface para las graficas
+interface _values_graff {
+    name: string;
+    value: number;
+}
 /*********/
 // TODO -> Exportacion de interfaces
 export {
@@ -123,5 +134,7 @@ export {
     _vehicle_create,
     _parking_create,
     _rating_parking,
-    _request_reservation
+    _request_reservation,
+    _ranking_register,
+    _values_graff
 }

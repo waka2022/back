@@ -21,10 +21,10 @@ const gooVerifyToken = async(token: string): Promise<_goo_user> => {
         //* |-> Cargamos el payload de la verificacion del usuario nuevo
         const pay: any = ticket.getPayload()
         //* |-> Extraemos los datos del usuario que registra o inicia sesion
-        const { name, email, picture } = pay
+        const { given_name, family_name, email, picture } = pay
         //* |-> Retornamos un objeto con la informacion verificada
         const user_goo: _goo_user = {
-            name,
+            name: `${given_name} ${family_name}`,
             email,
             picture
         }

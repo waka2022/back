@@ -23,6 +23,10 @@
         import routerBooking from './routes/bookings.routes'
         //? -_ Ruta de facturas
         import routerInvoiced from './routes/invoiced.routes'
+        //? -_ Ruta de ranking
+        import routerRanking from './routes/ranking.routes'
+        //? -_ Ruta de estadisticas
+        import routerStatistics from './routes/statistics.routes'
 /*********/
 //? -_ Inicializacion de aplicacion express
 const app = express()
@@ -50,6 +54,10 @@ app.use(express.json())
     app.use(`${_url_api_}/booking`, routerBooking)
     //* |-> Path que definira las rutas de facturacion
     app.use(`${_url_api_}/invoiced`, routerInvoiced)
+    //* |-> Path que definira las rutas de ranking
+    app.use(`${_url_api_}/ranking`, routerRanking)
+    //* |-> Path que definira las rutas de estadisticas
+    app.use(`${_url_api_}/statistics`, routerStatistics)
 /*********/
 // TODO -> Inicializacion de aplicacion express
 app.listen(_port_, () => console.log(`Server online in port: ${_port_}`))

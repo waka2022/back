@@ -42,7 +42,11 @@ const bookingSchema: Schema = new Schema({
                 moment: Date,
                 status: Boolean
             },
-            on_cancel: Boolean
+            on_cancel: Boolean,
+            global_status: {
+                type: Boolean,
+                default: true
+            }
         }
     },
     photo_news: {

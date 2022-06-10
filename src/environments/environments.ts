@@ -22,10 +22,11 @@ const _goo_key_api_: string = String(process.env.API_KEY_GOOGLE)
 const _goo_key_: string = String(process.env.GOOGLE_KEY)
 const _redirect_api_goo_: string = String(process.env.PATH_REDIRECT_GOO)
 const _email_def_: string = String(process.env.EMAIL_DEF)
-const _urls_template_: string = _cloud_product_ === 'false' ? 'http://localhost:4200/' : 'http://localhost:4200/'
+const _urls_template_: string = _cloud_product_ === 'false' ? 'http://localhost:4200/' : 'https://wakaview.herokuapp.com/'
 const _secret_token_files_: string = String(process.env.SECRET_TOKEN_FILES)
 const _key_files_: string = String(process.env.SECRET_KEY)
 const _url_waka_files_: string = `${ _cloud_product_ === 'false' ? 'http://localhost:2000/waka-files/v1' : '' }`
+const _url_socket_: string = `${ _cloud_product_ === 'false' ? 'http://localhost:2105/v1/socket' : 'https://wakasocket.herokuapp.com/v1/socket' }`
 /*********/
 // TODO -> Exportacion de modulo
 export {
@@ -44,5 +45,6 @@ export {
     _key_files_,
     _user_mongo_,
     _pass_mongo_,
-    _url_waka_files_
+    _url_waka_files_,
+    _url_socket_
 }

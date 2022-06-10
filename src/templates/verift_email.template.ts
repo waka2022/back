@@ -40,7 +40,7 @@ export const email_account_template_html = (name_user: string, text: string, tok
                                         <p style="margin:0 0 12px 0;font-size:16px;line-height:24px;font-family:Arial,sans-serif;">
                                             ${text}.
                                         </p>
-                                        <a href="${_urls_template_}re-activation-account/${token}">Recuperar!</a>
+                                        <a href="${_urls_template_}re-activation-account/${token}">Iniciemos ahora!</a>
                                     </td>
                                 </tr>
                             </td>
